@@ -19,7 +19,7 @@ namespace OdinsHollow
 		public void Awake()
 		{
 			Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
-			OdinsHollowWand.Crafting.Add(CraftingTable.Workbench, 10);
+			OdinsHollowWand.Crafting.Add(CraftingTable.Workbench, 15);
 			OdinsHollowWand.RequiredItems.Add("SwordCheat", 1);
 			OdinsHollowWand.CraftAmount = 1;
 
