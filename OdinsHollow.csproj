@@ -78,6 +78,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\ItemManager.dll</HintPath>
     </Reference>
+    <Reference Include="LocationManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\LocationManager.dll</HintPath>
+    </Reference>
     <Reference Include="PieceManager, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\PieceManager-master - OdinsFoodBarrels\PieceManager-master\Libs\PieceManager.dll</HintPath>
@@ -110,6 +114,7 @@
     <Content Include="ItemManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="LocationManager.dll" />
     <Content Include="PieceManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
