@@ -13,7 +13,7 @@ namespace OdinsHollow
 	public class OdinsHollow : BaseUnityPlugin
 	{
 		private const string ModName = "OdinsHollow";
-		private const string ModVersion = "1.0.2";
+		private const string ModVersion = "1.0.4";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
 
 
@@ -35,30 +35,26 @@ namespace OdinsHollow
 			GameObject OH_Cave_End_1 = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_Cave_End_1");
 			GameObject OH_Cave_End_2 = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_Cave_End_2");
 			GameObject OH_Cave_End_3 = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_Cave_End_3");
-			//GameObject OH_OdinsHollow = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_OdinsHollow");
+			GameObject OdinsHollowMush = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OdinsHollowMush");
+			GameObject OH_OdinsHollow = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_OdinsHollow");
 
-			
+
 			{
-
-				LocationManager.Location location = new("odinshollow", "OdinsHollowDungeon")
+				_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 				{
 					MapIcon = "ohcave.png",
-					ShowMapIcon = ShowIcon.Always,
+					CanSpawn = true,
+					ShowMapIcon = ShowIcon.Explored,
 					Biome = Heightmap.Biome.Meadows,
-					SpawnDistance = new Range(100, 1500),
-					SpawnAltitude = new Range(5, 150),
+					SpawnDistance = new Range(500, 1500),
+					SpawnAltitude = new Range(10, 100),
 					MinimumDistanceFromGroup = 100,
-					Unique = true,
-					Count = 15
+					Count = 15,
+					Unique = true
 					
 				};
 
-				location.CreatureSpawner.Add("Spawner_1", "Greydwarf");
-
 			}
-		
-
-			
 
 		new Harmony(ModName).PatchAll();
 
