@@ -1,11 +1,11 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using BepInEx;
 using ItemManager;
 using UnityEngine;
 using LocationManager;
 using PieceManager;
 using ServerSync;
 using HarmonyLib;
-
 
 namespace OdinsHollow
 {
@@ -16,14 +16,12 @@ namespace OdinsHollow
 		private const string ModVersion = "1.0.4";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
 
-
 		public void Awake()
 		{
 			Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
 			OdinsHollowWand.Crafting.Add(CraftingTable.StoneCutter, 15);
 			OdinsHollowWand.RequiredItems.Add("SwordCheat", 1);
 			OdinsHollowWand.CraftAmount = 1;
-
 
 			GameObject OH_Cave_Hall_1 = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_Cave_Hall_1");
 			GameObject OH_Cave_Hall_2 = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_Cave_Hall_2");
@@ -44,29 +42,41 @@ namespace OdinsHollow
 			OH_Spawner_Shroom.Name.English("OH Spawner Shroom");
 			OH_Spawner_Shroom.Description.English("A Spawner Shroom");
 			OH_Spawner_Shroom.RequiredItems.Add("SwordCheat", 1, false);
+			
+			CreaturesInSpawners.Add(OH_Spawner_Shroom, "Draugr");
 
-
+			_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 			{
-				_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
+				MapIcon = "ohcave.png",
+				CanSpawn = true,
+				ShowMapIcon = ShowIcon.Explored,
+				Biome = Heightmap.Biome.Meadows,
+				SpawnDistance = new Range(500, 1500),
+				SpawnAltitude = new Range(10, 100),
+				MinimumDistanceFromGroup = 100,
+				Count = 15,
+				Unique = true
+
+			};
+
+			new Harmony(ModName).PatchAll();
+		}
+
+		private static readonly Dictionary<BuildPiece, string> CreaturesInSpawners = new();
+
+		[HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
+		private class AddCreatureToSpawner
+		{
+			private static void Postfix(ZNetScene __instance)
+			{
+				foreach (KeyValuePair<BuildPiece, string> kv in CreaturesInSpawners)
 				{
-					MapIcon = "ohcave.png",
-					CanSpawn = true,
-					ShowMapIcon = ShowIcon.Explored,
-					Biome = Heightmap.Biome.Meadows,
-					SpawnDistance = new Range(500, 1500),
-					SpawnAltitude = new Range(10, 100),
-					MinimumDistanceFromGroup = 100,
-					Count = 15,
-					Unique = true
-					
-				};
-
+					foreach (CreatureSpawner spawner in kv.Key.Prefab.transform.GetComponentsInChildren<CreatureSpawner>())
+					{
+						spawner.m_creaturePrefab = __instance.GetPrefab(kv.Value);
+					}
+				}
 			}
-
-		new Harmony(ModName).PatchAll();
-
-
 		}
 	}
-
 }
