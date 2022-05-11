@@ -39,6 +39,11 @@ namespace OdinsHollow
 			GameObject OdinsHollowMush = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OdinsHollowMush");
 			GameObject OH_OdinsHollow = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_OdinsHollow");
 
+			BuildPiece OH_Spawner_Shroom = new(PiecePrefabManager.RegisterAssetBundle("bamboo"), "OH_Spawner_Shroom", true, "OdinsHollowWand");
+			OH_Spawner_Shroom.Name.English("OH Spawner Shroom");
+			OH_Spawner_Shroom.Description.English("A Spawner Shroom");
+			OH_Spawner_Shroom.RequiredItems.Add("SwordCheat", 1, false);
+
 
 			{
 				_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
