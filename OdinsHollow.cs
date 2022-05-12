@@ -13,7 +13,7 @@ namespace OdinsHollow
 	public class OdinsHollow : BaseUnityPlugin
 	{
 		private const string ModName = "OdinsHollow";
-		private const string ModVersion = "1.0.4";
+		private const string ModVersion = "1.0.0";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
 
 		public void Awake()
@@ -40,10 +40,10 @@ namespace OdinsHollow
 
 			BuildPiece OH_Spawner_Shroom = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom", true, "OdinsHollowWand");
 			OH_Spawner_Shroom.Name.English("OH Spawner Shroom");
-			OH_Spawner_Shroom.Description.English("A Spawner Shroom");
+			OH_Spawner_Shroom.Description.English("A Neck Spawner Shroom");
 			OH_Spawner_Shroom.RequiredItems.Add("SwordCheat", 1, false);
 			
-			CreaturesInSpawners.Add(OH_Spawner_Shroom, "Draugr");
+			CreaturesInSpawners.Add(OH_Spawner_Shroom, "Neck");
 
 			_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 			{
