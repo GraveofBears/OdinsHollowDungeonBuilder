@@ -26,10 +26,10 @@ namespace OdinsHollow
 		private readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
 		private static ConfigEntry<bool> ServerConfigLocked = null!;
-//		private static ConfigEntry<string> OH_Spawner_Shroom_1_Prefab = null!;
-//		private static ConfigEntry<string> OH_Spawner_Shroom_2_Prefab = null!;
-//		private static ConfigEntry<string> OH_Spawner_Shroom_3_Prefab = null!;
-//		private static ConfigEntry<string> OH_Spawner_Shroom_4_Prefab = null!;
+		private static ConfigEntry<string> OH_Spawner_Shroom_1_Prefab = null!;
+		private static ConfigEntry<string> OH_Spawner_Shroom_2_Prefab = null!;
+		private static ConfigEntry<string> OH_Spawner_Shroom_3_Prefab = null!;
+		private static ConfigEntry<string> OH_Spawner_Shroom_4_Prefab = null!;
 
 		private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
 		{
@@ -72,28 +72,26 @@ namespace OdinsHollow
 			GameObject OdinsHollowMush = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OdinsHollowMush");
 			GameObject OH_OdinsHollow = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_OdinsHollow");
 
-
-
 			BuildPiece OH_Spawner_Shroom_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_1", true, "OdinsHollowWand");
 			OH_Spawner_Shroom_1.Name.English("OH Spawner Shroom 1");
-			OH_Spawner_Shroom_1.Description.English("A Dungeon Spawner1 Shroom");
+			OH_Spawner_Shroom_1.Description.English("A Dungeon Spawner Shroom");
 			OH_Spawner_Shroom_1.RequiredItems.Add("SwordCheat", 1, false);
 
 			BuildPiece OH_Spawner_Shroom_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_2", true, "OdinsHollowWand");
 			OH_Spawner_Shroom_2.Name.English("OH Spawner Shroom 2");
-			OH_Spawner_Shroom_2.Description.English("A Dungeon Spawner2 Shroom");
+			OH_Spawner_Shroom_2.Description.English("A Dungeon Spawner Shroom");
 			OH_Spawner_Shroom_2.RequiredItems.Add("SwordCheat", 1, false);
 
 			BuildPiece OH_Spawner_Shroom_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_3", true, "OdinsHollowWand");
 			OH_Spawner_Shroom_3.Name.English("OH Spawner Shroom 3");
-			OH_Spawner_Shroom_3.Description.English("A Dungeon Spawner3 Shroom");
+			OH_Spawner_Shroom_3.Description.English("A Dungeon Spawner Shroom");
 			OH_Spawner_Shroom_3.RequiredItems.Add("SwordCheat", 1, false);
 
 			BuildPiece OH_Spawner_Shroom_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_4", true, "OdinsHollowWand");
 			OH_Spawner_Shroom_4.Name.English("OH Spawner Shroom 4");
-			OH_Spawner_Shroom_4.Description.English("A Dungeon Spawner4 Shroom");
+			OH_Spawner_Shroom_4.Description.English("A Dungeon Spawner Shroom");
 			OH_Spawner_Shroom_4.RequiredItems.Add("SwordCheat", 1, false);
-/*
+
 			OH_Spawner_Shroom_1_Prefab = config("2 - Spawner", "Creature for Shroom spawner 1", "Neck", "Prefab name for the creature that should spawn at the first shroom spawner.");
 			OH_Spawner_Shroom_1_Prefab.SettingChanged += (_, _) => UpdateSpawner(OH_Spawner_Shroom_1, OH_Spawner_Shroom_1_Prefab);
 			OH_Spawner_Shroom_2_Prefab = config("2 - Spawner", "Creature for Shroom spawner 2", "Boar", "Prefab name for the creature that should spawn at the second shroom spawner.");
@@ -107,7 +105,7 @@ namespace OdinsHollow
 			CreaturesInSpawners.Add(OH_Spawner_Shroom_2, OH_Spawner_Shroom_2_Prefab);
 			CreaturesInSpawners.Add(OH_Spawner_Shroom_3, OH_Spawner_Shroom_3_Prefab);
 			CreaturesInSpawners.Add(OH_Spawner_Shroom_4, OH_Spawner_Shroom_4_Prefab);
-*/
+
 			_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 			{
 				MapIcon = "ohcave.png",
@@ -121,7 +119,6 @@ namespace OdinsHollow
 				Unique = true
 			};
 
-			new Harmony(ModName).PatchAll();
 		}
 
 		private static void UpdateSpawner(BuildPiece piece, ConfigEntry<string> configEntry)
