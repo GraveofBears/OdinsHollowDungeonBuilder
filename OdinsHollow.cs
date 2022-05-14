@@ -24,7 +24,7 @@ namespace OdinsHollow
 		private static readonly Dictionary<BuildPiece, ConfigEntry<string>> CreaturesInSpawners = new();
 
 		private readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
-		
+
 		private static ConfigEntry<bool> ServerConfigLocked = null!;
 		private static ConfigEntry<string> OH_Spawner_Shroom_1_Prefab = null!;
 		private static ConfigEntry<string> OH_Spawner_Shroom_2_Prefab = null!;
