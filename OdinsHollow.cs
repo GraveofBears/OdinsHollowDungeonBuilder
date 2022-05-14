@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
+using BepInEx.Configuration;
 using ItemManager;
 using UnityEngine;
 using LocationManager;
 using PieceManager;
 using ServerSync;
 using HarmonyLib;
+using System.Reflection;
 
 namespace OdinsHollow
 {
@@ -13,12 +15,34 @@ namespace OdinsHollow
 	public class OdinsHollow : BaseUnityPlugin
 	{
 		private const string ModName = "OdinsHollow";
-		private const string ModVersion = "1.0.1";
+		private const string ModVersion = "1.0.2";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
+		private static Harmony harmony = null!;
 
+
+		ConfigSync configSync = new(ModGUID)
+		{ DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+		internal static ConfigEntry<bool> ServerConfigLocked = null!;
+		ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+		{
+			ConfigEntry<T> configEntry = Config.Bind(group, name, value, description);
+
+			SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+			syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
+
+			return configEntry;
+		}
+		ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
 		public void Awake()
 		{
-			Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			harmony = new(ModGUID);
+			harmony.PatchAll(assembly);
+			ServerConfigLocked = config("1 - General", "Lock Configuration", true, "If on, the configuration is locked and can be changed by server admins only.");
+
+
+
+		Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
 			OdinsHollowWand.Crafting.Add(CraftingTable.StoneCutter, 15);
 			OdinsHollowWand.RequiredItems.Add("SwordCheat", 1);
 			OdinsHollowWand.CraftAmount = 1;
@@ -38,12 +62,32 @@ namespace OdinsHollow
 			GameObject OdinsHollowMush = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OdinsHollowMush");
 			GameObject OH_OdinsHollow = ItemManager.PrefabManager.RegisterPrefab("odinshollow", "OH_OdinsHollow");
 
-			BuildPiece OH_Spawner_Shroom = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom", true, "OdinsHollowWand");
-			OH_Spawner_Shroom.Name.English("OH Spawner Shroom");
-			OH_Spawner_Shroom.Description.English("A Neck Spawner Shroom");
-			OH_Spawner_Shroom.RequiredItems.Add("SwordCheat", 1, false);
-			
-			CreaturesInSpawners.Add(OH_Spawner_Shroom, "Neck");
+			BuildPiece OH_Spawner_Shroom_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_1", true, "OdinsHollowWand");
+			OH_Spawner_Shroom_1.Name.English("OH Spawner Shroom 1");
+			OH_Spawner_Shroom_1.Description.English("A Dungeon Spawner Shroom");
+			OH_Spawner_Shroom_1.RequiredItems.Add("SwordCheat", 1, false);
+
+			BuildPiece OH_Spawner_Shroom_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_2", true, "OdinsHollowWand");
+			OH_Spawner_Shroom_2.Name.English("OH Spawner Shroom 2");
+			OH_Spawner_Shroom_2.Description.English("A Dungeon Spawner Shroom");
+			OH_Spawner_Shroom_2.RequiredItems.Add("SwordCheat", 1, false);
+
+			BuildPiece OH_Spawner_Shroom_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_3", true, "OdinsHollowWand");
+			OH_Spawner_Shroom_3.Name.English("OH Spawner Shroom 3");
+			OH_Spawner_Shroom_3.Description.English("A Dungeon Spawner Shroom");
+			OH_Spawner_Shroom_3.RequiredItems.Add("SwordCheat", 1, false);
+
+			BuildPiece OH_Spawner_Shroom_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_4", true, "OdinsHollowWand");
+			OH_Spawner_Shroom_4.Name.English("OH Spawner Shroom 4");
+			OH_Spawner_Shroom_4.Description.English("A Dungeon Spawner Shroom");
+			OH_Spawner_Shroom_4.RequiredItems.Add("SwordCheat", 1, false);
+
+			CreaturesInSpawners.Add(OH_Spawner_Shroom_1, "Neck");
+			CreaturesInSpawners.Add(OH_Spawner_Shroom_2, "Boar");
+			CreaturesInSpawners.Add(OH_Spawner_Shroom_3, "Greyling");
+			CreaturesInSpawners.Add(OH_Spawner_Shroom_4, "Bat");
+
+			configSync.AddLockingConfigEntry(ServerConfigLocked);
 
 			_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 			{
