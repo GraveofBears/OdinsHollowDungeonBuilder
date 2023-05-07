@@ -17,7 +17,7 @@ namespace OdinsHollow
 	public class OdinsHollow : BaseUnityPlugin
 	{
 		private const string ModName = "OdinsHollow";
-		private const string ModVersion = "1.0.9";
+		private const string ModVersion = "1.1.2";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
 		private static Harmony harmony = null!;
 
