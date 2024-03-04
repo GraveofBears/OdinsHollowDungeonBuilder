@@ -78,6 +78,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\ItemManager.dll</HintPath>
     </Reference>
+    <Reference Include="LocalizationManager">
+      <HintPath>.\LocalizationManager.dll</HintPath>
+    </Reference>
     <Reference Include="LocationManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>refs\LocationManager.dll</HintPath>
@@ -131,6 +134,7 @@
     <Content Include="ItemManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="LocalizationManager.dll" />
     <Content Include="LocationManager.dll" />
     <Content Include="PieceManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -142,6 +146,9 @@
   <ItemGroup>
     <EmbeddedResource Include="assets\odinshollow" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="translations\English.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -159,7 +166,4 @@
     <Target Name="AfterBuild">
     </Target>
     -->
-  <Target Name="Copy" AfterTargets="ILRepack">
-    <Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;$(GamePath)\BepInEx\plugins\$(AssemblyName).dll&quot;" />
-  </Target>
 </Project>
