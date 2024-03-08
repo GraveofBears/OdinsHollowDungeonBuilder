@@ -44,7 +44,8 @@ namespace OdinsHollow
 
 		private ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
 
-		public void Awake()
+
+        public void Awake()
 		{
             Localizer.Load();
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -62,6 +63,7 @@ namespace OdinsHollow
             BuildPiece OdinsHollowMush = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OdinsHollowMush");
 			OdinsHollowMush.RequiredItems.Add("SwordCheat", 1, false);
 			OdinsHollowMush.Category.Set("Hollow Pieces");
+            OdinsHollowMush.Tool.Add("OdinsHollowWand");
 
             BuildPiece OH_OdinsHollow = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_OdinsHollow");
 			OH_OdinsHollow.RequiredItems.Add("SwordCheat", 1, false);
@@ -203,100 +205,121 @@ namespace OdinsHollow
 			OH_Hall_End.Category.Set("Hollow Pieces");
             OH_Hall_End.Tool.Add("OdinsHollowWand");
 
+            //frost pieces
+
             BuildPiece OH_Frost_Cave_Bridge = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Bridge");
             OH_Frost_Cave_Bridge.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Bridge.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Bridge.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Bridge.Prefab, false);
 
             BuildPiece OH_Frost_Cave_End_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_End_1");
             OH_Frost_Cave_End_1.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_End_1.Category.Set("Hollow Pieces");
             OH_Frost_Cave_End_1.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_End_1.Prefab, false);
 
             BuildPiece OH_Frost_Cave_End_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_End_2");
             OH_Frost_Cave_End_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_End_2.Category.Set("Hollow Pieces");
             OH_Frost_Cave_End_2.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_End_2.Prefab, false);
 
             BuildPiece OH_Frost_Cave_End_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_End_3");
             OH_Frost_Cave_End_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_End_3.Category.Set("Hollow Pieces");
             OH_Frost_Cave_End_3.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_End_3.Prefab, false);
 
             BuildPiece OH_Frost_Cave_End_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_End_4");
             OH_Frost_Cave_End_4.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_End_4.Category.Set("Hollow Pieces");
             OH_Frost_Cave_End_4.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_End_4.Prefab, false);
 
             BuildPiece OH_Frost_Cave_End_5 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_End_5");
             OH_Frost_Cave_End_5.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_End_5.Category.Set("Hollow Pieces");
             OH_Frost_Cave_End_5.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_End_5.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Hall_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Hall_1");
             OH_Frost_Cave_Hall_1.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Hall_1.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Hall_1.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Hall_1.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Hall_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Hall_2");
             OH_Frost_Cave_Hall_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Hall_2.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Hall_2.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Hall_2.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Hall_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Hall_3");
             OH_Frost_Cave_Hall_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Hall_3.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Hall_3.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Hall_3.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Hall_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Hall_4");
             OH_Frost_Cave_Hall_4.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Hall_4.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Hall_4.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Hall_4.Prefab, false);          
 
             BuildPiece OH_Frost_Cave_Room_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Room_1");
             OH_Frost_Cave_Room_1.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Room_1.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Room_1.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Room_1.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Room_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Room_2");
             OH_Frost_Cave_Room_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Room_2.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Room_2.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Room_2.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Room_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Room_3");
             OH_Frost_Cave_Room_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Room_3.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Room_3.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Room_3.Prefab, false);
 
             BuildPiece OH_Frost_Cave_Room_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Room_4");
             OH_Frost_Cave_Room_4.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Cave_Room_4.Category.Set("Hollow Pieces");
             OH_Frost_Cave_Room_4.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Cave_Room_4.Prefab, false);
 
             BuildPiece OH_Frost_Hall_End = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Hall_End");
             OH_Frost_Hall_End.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Hall_End.Category.Set("Hollow Pieces");
             OH_Frost_Hall_End.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Hall_End.Prefab, false);
 
             BuildPiece OH_Frost_Rock_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_1");
             OH_Frost_Rock_1.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_1.Category.Set("Hollow Pieces");
             OH_Frost_Rock_1.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Rock_1.Prefab, false);
 
             BuildPiece OH_Frost_Rock_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_2");
             OH_Frost_Rock_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_2.Category.Set("Hollow Pieces");
             OH_Frost_Rock_2.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Rock_2.Prefab, false);
 
             BuildPiece OH_Frost_Rock_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_3");
             OH_Frost_Rock_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_3.Category.Set("Hollow Pieces");
             OH_Frost_Rock_3.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Rock_3.Prefab, false);
 
             BuildPiece OH_Frost_Rock_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_4");
             OH_Frost_Rock_4.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_4.Category.Set("Hollow Pieces");
             OH_Frost_Rock_4.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Rock_4.Prefab, false);
 
             BuildPiece OH_Frost_Stalagmite_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Stalagmite_1");
             OH_Frost_Stalagmite_1.RequiredItems.Add("SwordCheat", 1, false);
@@ -304,35 +327,28 @@ namespace OdinsHollow
             OH_Frost_Stalagmite_1.Tool.Add("OdinsHollowWand");
 
             BuildPiece OH_Frost_Stalagmite_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Stalagmite_2");
-            OH_Frost_Stalagmite_2.Name.English("OH_Frost_Stalagmite_2");
-            OH_Frost_Stalagmite_2.Description.English("A patch for blocking halls");
             OH_Frost_Stalagmite_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Stalagmite_2.Category.Set("Hollow Pieces");
             OH_Frost_Stalagmite_2.Tool.Add("OdinsHollowWand");
 
             BuildPiece OH_Frost_Stalagmite_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Stalagmite_3");
-            OH_Frost_Stalagmite_3.Name.English("OH_Frost_Stalagmite_3");
-            OH_Frost_Stalagmite_3.Description.English("A patch for blocking halls");
             OH_Frost_Stalagmite_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Stalagmite_3.Category.Set("Hollow Pieces");
             OH_Frost_Stalagmite_3.Tool.Add("OdinsHollowWand");
 
             BuildPiece OH_Frost_Wall_Patch = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Wall_Patch");
-            OH_Frost_Wall_Patch.Name.English("OH_Frost_Wall_Patch");
-            OH_Frost_Wall_Patch.Description.English("A patch for blocking halls");
             OH_Frost_Wall_Patch.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Wall_Patch.Category.Set("Hollow Pieces");
             OH_Frost_Wall_Patch.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_Frost_Wall_Patch.Prefab, false);
 
             BuildPiece OH_OdinsHollow_Frost_Door = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_OdinsHollow_Frost_Door");
-            OH_OdinsHollow_Frost_Door.Name.English("OH_OdinsHollow_Frost_Door");
-            OH_OdinsHollow_Frost_Door.Description.English("A patch for blocking halls");
             OH_OdinsHollow_Frost_Door.RequiredItems.Add("SwordCheat", 1, false);
             OH_OdinsHollow_Frost_Door.Category.Set("Hollow Pieces");
             OH_OdinsHollow_Frost_Door.Tool.Add("OdinsHollowWand");
+            //MaterialReplacer.RegisterGameObjectForMatSwap(OH_OdinsHollow_Frost_Door.Prefab, false);
 
             //shroomsspawners
-
 
             BuildPiece OH_Spawner_Shroom_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_1");
 			OH_Spawner_Shroom_1.RequiredItems.Add("SwordCheat", 1, false);

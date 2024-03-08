@@ -1,6 +1,3 @@
-location_hover_text: "Odins Hollow"
-location_enter_text: "Entering Odins Hollow"
-location_exit_text: "Exiting Odins Hollow"
 OdinsHollowWand: "Dungeon Wand"
 OdinsHollowWand_Description: "This is an admin wand used to craft the Hollow."
 OdinsHollowMush: "Odins Build Shroom."
