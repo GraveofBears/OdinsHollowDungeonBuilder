@@ -4,6 +4,7 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ItemManager;
+using CreatureManager;
 using UnityEngine;
 using LocationManager;
 using PieceManager;
@@ -18,7 +19,7 @@ namespace OdinsHollow
 	public class OdinsHollow : BaseUnityPlugin
 	{
 		private const string ModName = "OdinsHollow";
-		private const string ModVersion = "2.0.1";
+		private const string ModVersion = "2.0.7";
 		private const string ModGUID = "org.bepinex.plugins.odinshollow";
 		private static Harmony harmony = null!;
 
@@ -50,7 +51,7 @@ namespace OdinsHollow
         {
             foreach (var go in ObjectsToAddToMaterialReplacer)
             {
-                Transform? child = Utils.FindChild(go.transform, "Rocks");
+                Transform child = Utils.FindChild(go.transform, "Rocks");
                 if (!child) continue;
                 MaterialReplacer.RegisterGameObjectForMatSwap(child.gameObject);
             }
@@ -66,10 +67,19 @@ namespace OdinsHollow
 			ServerConfigLocked = config("1 - General", "Lock Configuration", true, "If on, the configuration is locked and can be changed by server admins only.");
 			configSync.AddLockingConfigEntry(ServerConfigLocked);
 
-			Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
-			OdinsHollowWand.Crafting.Add(ItemManager.CraftingTable.StoneCutter, 20);
+
+            #region Items
+
+            Item OdinsHollowWand = new("odinshollow", "OdinsHollowWand");
+            OdinsHollowWand.Crafting.Add(ItemManager.CraftingTable.StoneCutter, 20);
             OdinsHollowWand.RequiredItems.Add("SwordCheat", 1);
-			OdinsHollowWand.CraftAmount = 1;
+            OdinsHollowWand.CraftAmount = 1;
+
+            #endregion
+
+
+
+            #region HollowPieces
 
             BuildPiece OdinsHollowMush = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OdinsHollowMush");
 			OdinsHollowMush.RequiredItems.Add("SwordCheat", 1, false);
@@ -216,7 +226,8 @@ namespace OdinsHollow
 			OH_Hall_End.Category.Set("Hollow Pieces");
             OH_Hall_End.Tool.Add("OdinsHollowWand");
 
-            //frost pieces
+            #endregion
+            #region FrostPieces
 
             BuildPiece OH_Frost_Cave_Bridge = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Cave_Bridge");
             OH_Frost_Cave_Bridge.RequiredItems.Add("SwordCheat", 1, false);
@@ -313,19 +324,16 @@ namespace OdinsHollow
             OH_Frost_Rock_1.Category.Set("Hollow Pieces");
             OH_Frost_Rock_1.Tool.Add("OdinsHollowWand");
 
-
             BuildPiece OH_Frost_Rock_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_2");
             OH_Frost_Rock_2.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_2.Category.Set("Hollow Pieces");
             OH_Frost_Rock_2.Tool.Add("OdinsHollowWand");
             ObjectsToAddToMaterialReplacer.Add(OH_Frost_Rock_2.Prefab);
 
-
             BuildPiece OH_Frost_Rock_3 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_3");
             OH_Frost_Rock_3.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Rock_3.Category.Set("Hollow Pieces");
             OH_Frost_Rock_3.Tool.Add("OdinsHollowWand");
-
 
             BuildPiece OH_Frost_Rock_4 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Rock_4");
             OH_Frost_Rock_4.RequiredItems.Add("SwordCheat", 1, false);
@@ -337,7 +345,6 @@ namespace OdinsHollow
             OH_Frost_Stalagmite_1.RequiredItems.Add("SwordCheat", 1, false);
             OH_Frost_Stalagmite_1.Category.Set("Hollow Pieces");
             OH_Frost_Stalagmite_1.Tool.Add("OdinsHollowWand");
-
 
             BuildPiece OH_Frost_Stalagmite_2 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Frost_Stalagmite_2");
             OH_Frost_Stalagmite_2.RequiredItems.Add("SwordCheat", 1, false);
@@ -355,7 +362,6 @@ namespace OdinsHollow
             OH_Frost_Wall_Patch.Tool.Add("OdinsHollowWand");
             ObjectsToAddToMaterialReplacer.Add(OH_Frost_Wall_Patch.Prefab);
 
-
             BuildPiece OH_OdinsHollow_Frost_Door = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_OdinsHollow_Frost_Door");
             OH_OdinsHollow_Frost_Door.RequiredItems.Add("SwordCheat", 1, false);
             OH_OdinsHollow_Frost_Door.Category.Set("Hollow Pieces");
@@ -364,7 +370,8 @@ namespace OdinsHollow
 
             AddToMaterialReplacer();
 
-            //shroomsspawners
+            #endregion
+            #region shroomsspawners
 
             BuildPiece OH_Spawner_Shroom_1 = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), "OH_Spawner_Shroom_1");
 			OH_Spawner_Shroom_1.RequiredItems.Add("SwordCheat", 1, false);
@@ -388,7 +395,7 @@ namespace OdinsHollow
 
             OH_Spawner_Shroom_1_Prefab = config("2 - Spawner", "Creature for Shroom spawner 1", "Neck", "Prefab name for the creature that should spawn at the first shroom spawner.");
 			OH_Spawner_Shroom_1_Prefab.SettingChanged += (_, _) => UpdateSpawner(OH_Spawner_Shroom_1, OH_Spawner_Shroom_1_Prefab);
-			OH_Spawner_Shroom_2_Prefab = config("2 - Spawner", "Creature for Shroom spawner 2", "Boar", "Prefab name for the creature that should spawn at the second shroom spawner.");
+			OH_Spawner_Shroom_2_Prefab = config("2 - Spawner", "Creature for Shroom spawner 2", "Skeleton", "Prefab name for the creature that should spawn at the second shroom spawner.");
 			OH_Spawner_Shroom_2_Prefab.SettingChanged += (_, _) => UpdateSpawner(OH_Spawner_Shroom_2, OH_Spawner_Shroom_2_Prefab);
 			OH_Spawner_Shroom_3_Prefab = config("2 - Spawner", "Creature for Shroom spawner 3", "Greyling", "Prefab name for the creature that should spawn at the third shroom spawner.");
 			OH_Spawner_Shroom_3_Prefab.SettingChanged += (_, _) => UpdateSpawner(OH_Spawner_Shroom_3, OH_Spawner_Shroom_3_Prefab);
@@ -400,22 +407,26 @@ namespace OdinsHollow
 			CreaturesInSpawners.Add(OH_Spawner_Shroom_3, OH_Spawner_Shroom_3_Prefab);
 			CreaturesInSpawners.Add(OH_Spawner_Shroom_4, OH_Spawner_Shroom_4_Prefab);
 
-			_ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
+            #endregion
+
+            #region Location
+
+            _ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
 			{
 				MapIcon = "ohcave.png",
 				CanSpawn = true,
 				ShowMapIcon = ShowIcon.Explored,
 				Biome = Heightmap.Biome.Meadows,
-				SpawnDistance = new Range(500, 1500),
-				SpawnAltitude = new Range(10, 100),
+				SpawnDistance = new LocationManager.Range(500, 1500),
+				SpawnAltitude = new LocationManager.Range(10, 100),
 				MinimumDistanceFromGroup = 100,
 				Count = 15,
 				Unique = true
 			};
 
 		}
-
-		private static void UpdateSpawner(BuildPiece piece, ConfigEntry<string> configEntry)
+        #endregion
+        private static void UpdateSpawner(BuildPiece piece, ConfigEntry<string> configEntry)
 		{
 			if (ZNetScene.instance.GetPrefab(configEntry.Value) is { } character)
 			{
