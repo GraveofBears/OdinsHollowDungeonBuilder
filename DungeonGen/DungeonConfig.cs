@@ -43,8 +43,14 @@ namespace OdinsHollow.DungeonGen
 
         internal static ConfigEntry<bool> OnlyRefillWhenEmpty = null!;
 
+        // Buildable shroom spawners
+        internal static ConfigEntry<float> BuildableSpawnerRespawnMinutes = null!;
+
         internal static void Bind(OdinsHollow plugin)
         {
+            BuildableSpawnerRespawnMinutes = plugin.config("2 - Spawner", "Spawner Respawn Time", 120f, new ConfigDescription("Minutes of in-game time after a buildable shroom spawner's creature dies before it spawns a new one. 0 = never respawn.", new AcceptableValueRange<float>(0f, 10080f)));
+            BuildableSpawnerRespawnMinutes.SettingChanged += (_, _) => DungeonPatches.ApplySpawnerSettingsToLoaded();
+
             const string location = "3 - Dungeon Location";
             DungeonCount = plugin.config(location, "Dungeon Count", 1, new ConfigDescription("How many Odins Hollow dungeons are placed in a world. 0 disables placement. Only affects areas of the world that haven't been generated yet; requires a restart.", new AcceptableValueRange<int>(0, 100)));
             DungeonBiome = plugin.config(location, "Dungeon Biome", Heightmap.Biome.Meadows, "Biome(s) the dungeon can be placed in. Several can be combined, e.g. \"Meadows, BlackForest\". Only affects areas of the world that haven't been generated yet; requires a restart.");
@@ -64,6 +70,7 @@ namespace OdinsHollow.DungeonGen
             SpawnerPrefabs = plugin.config(spawners, "Spawner Prefabs", "OH_DG_Spawner_Shroom_1,OH_DG_Spawner_Shroom_2,OH_DG_Spawner_Shroom_3,OH_DG_Spawner_Shroom_4", "Spawner prefabs picked at random for spawner spots. Falls back to the OH_ build piece if an OH_DG_ prefab doesn't exist.");
             DungeonCreatures = plugin.config(spawners, "Dungeon Creatures", "Skeleton:3,Greyling:2,Bat:2,Neck:1", "Creatures for generated dungeon spawners, as Prefab:weight. Higher weight is more common.");
             SpawnerRespawnMinutes = plugin.config(spawners, "Spawner Respawn Time", 120f, new ConfigDescription("Minutes of in-game time after a dungeon spawner's creature dies before it spawns a new one. 0 = never respawn.", new AcceptableValueRange<float>(0f, 10080f)));
+            SpawnerRespawnMinutes.SettingChanged += (_, _) => DungeonPatches.ApplySpawnerSettingsToLoaded();
 
             const string chests = "6 - Dungeon Chests";
             ChestChance = plugin.config(chests, "Chest Chance", 0.5f, new ConfigDescription("Chance (0-1) for each chest spot in a generated dungeon to get a loot chest.", new AcceptableValueRange<float>(0f, 1f)));

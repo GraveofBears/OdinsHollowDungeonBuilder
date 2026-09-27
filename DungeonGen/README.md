@@ -10,9 +10,18 @@ from its start connector, then fills it with loot chests and creature spawners. 
 - Auto-generation skips any dungeon that already has player-built pieces within 80 m of its start, so hand-built
   dungeons in existing worlds are left alone.
 
-## Unity setup
+## Works without any Unity changes
 
-Everything goes in the `odinshollow` asset bundle. Leave `PrefabInstances` as it is; the build pieces keep using it.
+If the bundle has no `DungeonGen` rooms, the mod builds dungeons from in-memory **copies** of the room build pieces
+(`OH_Cave_*`, `OH_Frost_*`, `OH_Ruins_*`). The build pieces themselves aren't changed. Any room without chest or
+spawner spots gets one automatically, dropped onto the room's floor: a chest in each End room, and a spawner in each
+other room. Chests and spawners fall back to `OH_Loot_Chest` and `OH_Spawner_Shroom_1..4`. The known connector
+problems listed below still apply in this mode.
+
+## Unity setup (optional, for fine-tuning)
+
+Once any `OH_DG_` room is in the bundle, only the DungeonGen rooms are used for new layouts. Everything goes in the
+`odinshollow` asset bundle. Leave `PrefabInstances` as it is; the build pieces keep using it.
 
 1. **Duplicate the room pieces** into `OdinsHollow/DungeonGen` and rename them with an `OH_DG_` prefix, e.g.
    `OH_DG_Cave_Room_1`, `OH_DG_Frost_Cave_Hall_2`, `OH_DG_Ruins_End_1`.
@@ -53,6 +62,7 @@ Everything goes in the `odinshollow` asset bundle. Leave `PrefabInstances` as it
 | | Spawner Respawn Time (minutes, 0 = never) | 120 |
 | 6 - Dungeon Chests | Chest Chance, Chest Prefabs, Chest Loot, Chest Rolls Min/Max | 0.5, OH_DG_Loot_Chest, … , 2/4 |
 | | Chest Respawn Time (minutes, 0 = never), Only Refill When Empty | 120, on |
+| 2 - Spawner | Spawner Respawn Time (buildable shroom spawners, minutes, 0 = never) | 120 |
 | 7 - Buildable Loot Chest | Chest Loot, Chest Rolls Min/Max, Chest Respawn Time | … , 2/4, 120 |
 
 Loot is written as `Item:min:max:weight`, separated by commas. Timers use in-game world time, which only advances while

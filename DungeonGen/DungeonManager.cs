@@ -35,6 +35,7 @@ namespace OdinsHollow.DungeonGen
         public ContentKind Kind;
         public Vector3 Position;
         public Quaternion Rotation;
+        public bool SnapToFloor; // automatic spot: dropped onto the floor below it when spawned
     }
 
     internal class RoomTemplate
@@ -62,10 +63,12 @@ namespace OdinsHollow.DungeonGen
         internal const string DungeonIdKey = "OH_DG_Id";
         internal const string ManualKey = "OH_DG_Manual";
         internal const string CreatureKey = "OH_DG_Creature";
+        internal const string ContentPendingKey = "OH_DG_ContentPending";
 
         private const string LayoutVersion = "OHDG1";
 
         private static readonly List<GameObject> DungeonGenPrefabs = new();
+        private static readonly List<GameObject> BuildPieceRooms = new();
         private static readonly Dictionary<string, RoomTemplate> Templates = new();
         private static GameObject? templateHolder;
 
@@ -84,7 +87,8 @@ namespace OdinsHollow.DungeonGen
         }
 
         // Finds every prefab in the bundle's DungeonGen folder. Rooms are kept as templates; networked prefabs
-        // (chests, spawners) are added to ZNetScene so they can be spawned into dungeons.
+        // (chests, spawners) are added to ZNetScene so they can be spawned into dungeons. The room build pieces are
+        // remembered too, as a fallback when the bundle has no DungeonGen rooms yet.
         internal static void LoadDungeonGenAssets(AssetBundle bundle)
         {
             if (bundle == null) return;
@@ -93,8 +97,17 @@ namespace OdinsHollow.DungeonGen
             {
                 if (!path.EndsWith(".prefab", StringComparison.Ordinal)) continue;
                 bool inFolder = path.Contains("/dungeongen/");
-                bool dgName = System.IO.Path.GetFileName(path).StartsWith("oh_dg_", StringComparison.Ordinal);
-                if (!inFolder && !dgName) continue;
+                string fileName = System.IO.Path.GetFileName(path);
+                bool dgName = fileName.StartsWith("oh_dg_", StringComparison.Ordinal);
+                if (!inFolder && !dgName)
+                {
+                    if (fileName.StartsWith("oh_", StringComparison.Ordinal) && bundle.LoadAsset<GameObject>(path) is { } piece && IsRoomPrefab(piece))
+                    {
+                        BuildPieceRooms.Add(piece);
+                    }
+
+                    continue;
+                }
 
                 GameObject prefab = bundle.LoadAsset<GameObject>(path);
                 if (prefab == null) continue;
@@ -106,7 +119,7 @@ namespace OdinsHollow.DungeonGen
                 }
             }
 
-            Debug.Log($"[OdinsHollow] Found {DungeonGenPrefabs.Count} DungeonGen prefabs.");
+            Debug.Log($"[OdinsHollow] Found {DungeonGenPrefabs.Count} DungeonGen prefabs and {BuildPieceRooms.Count} room build pieces.");
         }
 
         internal static bool IsRoomPrefab(GameObject prefab) => FindConnectors(prefab.transform).Count > 0 && !prefab.name.ToLowerInvariant().Contains("odinshollow");
@@ -121,9 +134,18 @@ namespace OdinsHollow.DungeonGen
             templateHolder.SetActive(false);
             Object.DontDestroyOnLoad(templateHolder);
 
-            foreach (GameObject prefab in DungeonGenPrefabs)
+            // Copies of the build pieces are used until DungeonGen rooms exist in the bundle; the pieces themselves
+            // are never modified.
+            List<GameObject> sources = DungeonGenPrefabs.Where(IsRoomPrefab).ToList();
+            if (sources.Count == 0)
             {
-                if (!IsRoomPrefab(prefab) || Templates.ContainsKey(prefab.name)) continue;
+                Debug.Log("[OdinsHollow] No DungeonGen rooms in the asset bundle; building dungeons from copies of the room build pieces.");
+                sources = BuildPieceRooms;
+            }
+
+            foreach (GameObject prefab in sources)
+            {
+                if (Templates.ContainsKey(prefab.name)) continue;
                 try
                 {
                     Templates[prefab.name] = BuildTemplate(prefab);
@@ -196,7 +218,37 @@ namespace OdinsHollow.DungeonGen
             room.IsEnd = room.Connectors.Count == 1;
             room.IsPlug = room.IsEnd && lowerName.Contains("hall_end");
             room.Bounds = ComputeBounds(copy, room.Connectors);
+            AddAutomaticSpots(room);
             return room;
+        }
+
+        // Rooms without any chest or spawner spots get one: ends (dead-end rooms) a chest, other rooms a spawner.
+        // The spot is dropped onto the room's floor when content is spawned.
+        private static void AddAutomaticSpots(RoomTemplate room)
+        {
+            if (room.IsPlug || room.Connectors.Count == 0 || room.Content.Any(c => c.Kind != ContentKind.Other)) return;
+
+            Vector3 center = room.Bounds.Center;
+            float floorY = room.Connectors.Average(c => c.Position.y);
+            if (room.IsEnd)
+            {
+                // Most of the way from the doorway to the middle of the room, facing the doorway.
+                Vector3 door = room.Connectors[0].Position;
+                Vector3 spot = Vector3.Lerp(door, center, 0.8f);
+                spot.y = floorY;
+                Vector3 toDoor = Vector3.ProjectOnPlane(door - spot, Vector3.up);
+                room.Content.Add(new ContentPoint
+                {
+                    Kind = ContentKind.Chest,
+                    Position = spot,
+                    Rotation = toDoor.sqrMagnitude > 0.01f ? Quaternion.LookRotation(toDoor.normalized, Vector3.up) : Quaternion.identity,
+                    SnapToFloor = true
+                });
+            }
+            else
+            {
+                room.Content.Add(new ContentPoint { Kind = ContentKind.Spawner, Position = new Vector3(center.x, floorY, center.z), Rotation = Quaternion.identity, SnapToFloor = true });
+            }
         }
 
         private static void StripComponents<T>(GameObject go) where T : Component
@@ -463,7 +515,13 @@ namespace OdinsHollow.DungeonGen
             {
                 string[] parts = entries[i].Split(';');
                 if (parts.Length != 8) return false;
-                if (!Templates.TryGetValue(parts[0], out RoomTemplate room))
+                if (!Templates.TryGetValue(parts[0], out RoomTemplate room) && FindRoomSource(parts[0]) is { } source)
+                {
+                    // Layout made from a room set that isn't the active one (e.g. build pieces before DungeonGen rooms existed).
+                    room = Templates[source.name] = BuildTemplate(source);
+                }
+
+                if (room == null)
                 {
                     Debug.LogWarning($"[OdinsHollow] Dungeon room {parts[0]} no longer exists; skipping it.");
                     continue;
@@ -481,11 +539,14 @@ namespace OdinsHollow.DungeonGen
             return true;
         }
 
+        private static GameObject? FindRoomSource(string name) => DungeonGenPrefabs.Concat(BuildPieceRooms).FirstOrDefault(p => p.name == name && IsRoomPrefab(p));
+
         #endregion
 
         #region Content
 
-        // Spawns the networked chests, spawners and props for a freshly generated layout. Runs once, on the owner.
+        // Spawns the networked chests, spawners and props for a freshly generated layout. Runs once, on the owner,
+        // after the rooms are built so automatic spots can be dropped onto the floor.
         internal static void SpawnContent(Transform locationRoot, List<PlacedRoom> rooms, int seed, int dungeonId)
         {
             List<string> chestPrefabs = LootTables.ParseWeighted(DungeonConfig.ChestPrefabs.Value).Select(kv => kv.Key).ToList();
@@ -521,6 +582,12 @@ namespace OdinsHollow.DungeonGen
 
                     Vector3 position = locationRoot.position + locationRoot.rotation * (room.Position + room.Rotation * point.Position);
                     Quaternion rotation = locationRoot.rotation * room.Rotation * point.Rotation;
+                    if (point.SnapToFloor)
+                    {
+                        if (!Physics.Raycast(position + Vector3.up * 3f, Vector3.down, out RaycastHit hit, 20f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)) continue;
+                        position = hit.point;
+                    }
+
                     GameObject spawned = Object.Instantiate(prefab, position, rotation);
                     ZNetView nview = spawned.GetComponent<ZNetView>();
                     if (nview == null || nview.GetZDO() == null) continue;

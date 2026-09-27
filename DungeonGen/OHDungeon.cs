@@ -112,7 +112,8 @@ namespace OdinsHollow.DungeonGen
             zdo.Set(DungeonManager.DungeonIdKey, dungeonId);
             zdo.Set(DungeonManager.ManualKey, false);
             zdo.Set(DungeonManager.LayoutKey, layout);
-            DungeonManager.SpawnContent(root, rooms, seed, dungeonId);
+            // Content is spawned by the owner once the rooms are built (see BuildRooms).
+            zdo.Set(DungeonManager.ContentPendingKey, rooms.Count > 0);
             return layout;
         }
 
@@ -123,6 +124,7 @@ namespace OdinsHollow.DungeonGen
             ZDO zdo = m_nview.GetZDO();
             int removed = DungeonManager.DestroyContent(zdo.GetInt(DungeonManager.DungeonIdKey));
             zdo.Set(DungeonManager.DungeonIdKey, 0);
+            zdo.Set(DungeonManager.ContentPendingKey, false);
             zdo.Set(DungeonManager.LayoutKey, "");
             zdo.Set(DungeonManager.ManualKey, markManual);
             Rebuild("");
@@ -232,6 +234,16 @@ namespace OdinsHollow.DungeonGen
             }
 
             ExpandInterior(rooms);
+
+            // Let the new room colliders settle before spawning chests and spawners onto their floors.
+            yield return null;
+            Physics.SyncTransforms();
+            if (IsOwner && m_nview!.GetZDO() is { } zdo && zdo.GetBool(DungeonManager.ContentPendingKey))
+            {
+                zdo.Set(DungeonManager.ContentPendingKey, false);
+                DungeonManager.SpawnContent(transform, rooms, seed, zdo.GetInt(DungeonManager.DungeonIdKey));
+            }
+
             m_building = null;
         }
 

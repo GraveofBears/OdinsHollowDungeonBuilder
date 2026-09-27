@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace OdinsHollow.DungeonGen
 {
@@ -25,22 +26,41 @@ namespace OdinsHollow.DungeonGen
             }
         }
 
-        // Spawners in generated dungeons keep the creature they rolled and use the configured respawn time.
+        // Spawners in generated dungeons keep the creature they rolled and use the dungeon respawn time; buildable
+        // shroom spawners use their own respawn time.
         [HarmonyPatch(typeof(CreatureSpawner), nameof(CreatureSpawner.Awake))]
-        private static class ApplyDungeonSpawner
+        private static class ApplySpawnerSettings
         {
-            private static void Postfix(CreatureSpawner __instance)
-            {
-                ZNetView nview = __instance.GetComponentInParent<ZNetView>();
-                if (nview == null || nview.GetZDO() is not { } zdo || zdo.GetInt(DungeonManager.DungeonIdKey) == 0) return;
+            private static void Postfix(CreatureSpawner __instance) => Apply(__instance);
+        }
 
+        private static void Apply(CreatureSpawner spawner)
+        {
+            ZNetView nview = spawner.GetComponentInParent<ZNetView>();
+            if (nview == null || nview.GetZDO() is not { } zdo) return;
+
+            if (zdo.GetInt(DungeonManager.DungeonIdKey) != 0)
+            {
                 string creature = zdo.GetString(DungeonManager.CreatureKey);
                 if (creature.Length > 0 && ZNetScene.instance != null && ZNetScene.instance.GetPrefab(creature) is { } prefab)
                 {
-                    __instance.m_creaturePrefab = prefab;
+                    spawner.m_creaturePrefab = prefab;
                 }
 
-                __instance.m_respawnTimeMinuts = DungeonConfig.SpawnerRespawnMinutes.Value;
+                spawner.m_respawnTimeMinuts = DungeonConfig.SpawnerRespawnMinutes.Value;
+            }
+            else if (Utils.GetPrefabName(nview.gameObject).StartsWith("OH_Spawner_", StringComparison.Ordinal))
+            {
+                spawner.m_respawnTimeMinuts = DungeonConfig.BuildableSpawnerRespawnMinutes.Value;
+            }
+        }
+
+        // Respawn times are read from the spawner component, so push config changes to the ones already loaded.
+        internal static void ApplySpawnerSettingsToLoaded()
+        {
+            foreach (CreatureSpawner spawner in Object.FindObjectsOfType<CreatureSpawner>())
+            {
+                Apply(spawner);
             }
         }
 
