@@ -137,6 +137,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioFix.cs" />
+    <Compile Include="DungeonGen\DungeonConfig.cs" />
+    <Compile Include="DungeonGen\DungeonManager.cs" />
+    <Compile Include="DungeonGen\DungeonPatches.cs" />
+    <Compile Include="DungeonGen\LootTables.cs" />
+    <Compile Include="DungeonGen\Obb.cs" />
+    <Compile Include="DungeonGen\OHDungeon.cs" />
+    <Compile Include="DungeonGen\OHLootChest.cs" />
     <Compile Include="MaterialReplacer.cs" />
     <Compile Include="OdinsHollow.cs" />
     <Compile Include="PieceManager.cs" />
