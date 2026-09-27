@@ -29,6 +29,8 @@ namespace OdinsHollow
 
         private static readonly Dictionary<BuildPiece, ConfigEntry<string>> CreaturesInSpawners = new();
 
+        internal static OdinsHollow Instance = null!;
+
         private readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
         private static ConfigEntry<bool> ServerConfigLocked = null!;
@@ -38,7 +40,9 @@ namespace OdinsHollow
         private static ConfigEntry<string> OH_Spawner_Shroom_4_Prefab = null!;
 
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+        internal static bool IsAdmin => Instance.configSync.IsAdmin || (ZNet.instance != null && ZNet.instance.IsServer());
+
+        internal ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
         {
             ConfigEntry<T> configEntry = Config.Bind(group, name, value, description);
 
@@ -48,15 +52,17 @@ namespace OdinsHollow
             return configEntry;
         }
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
+        internal ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
 
         public void Awake()
         {
+            Instance = this;
             Localizer.Load();
 
             ServerConfigLocked = config("1 - General", "Lock Configuration", true, "If on, the configuration is locked and can be changed by server admins only.");
             configSync.AddLockingConfigEntry(ServerConfigLocked);
 
+            DungeonGen.DungeonConfig.Bind(this);
 
             // Register items, pieces, and spawners as needed
             RegisterItemsAndPieces();
@@ -468,21 +474,42 @@ namespace OdinsHollow
 
             #endregion
 
+            #region LootChest
+
+            // The chest is new in the Unity project; only register it once it's in the bundle so older bundles still load.
+            if (PiecePrefabManager.RegisterAssetBundle("odinshollow").LoadAsset<GameObject>(DungeonGen.DungeonConfig.BuildableChestPrefab) != null)
+            {
+                BuildPiece OH_Loot_Chest = new(PiecePrefabManager.RegisterAssetBundle("odinshollow"), DungeonGen.DungeonConfig.BuildableChestPrefab);
+                OH_Loot_Chest.RequiredItems.Add("SwordCheat", 1, false);
+                OH_Loot_Chest.Category.Set("Hollow Pieces");
+                OH_Loot_Chest.Tool.Add("OdinsHollowWand");
+            }
+            else
+            {
+                Debug.LogWarning($"[OdinsHollow] {DungeonGen.DungeonConfig.BuildableChestPrefab} is not in the asset bundle yet; the buildable loot chest is disabled.");
+            }
+
+            #endregion
+
             #region Location
 
-            _ = new LocationManager.Location("odinshollow", "OdinsHollowDungeon")
+            // Count and biome are read by LocationManager when the world's locations are set up, so changes apply on restart
+            // and only to zones that haven't been generated yet.
+            LocationManager.Location odinsHollowDungeon = new("odinshollow", "OdinsHollowDungeon")
             {
                 MapIcon = "ohcave.png",
-                CanSpawn = true,
+                CanSpawn = DungeonGen.DungeonConfig.DungeonCount.Value > 0,
                 ShowMapIcon = ShowIcon.Explored,
-                Biome = Heightmap.Biome.Meadows,
+                Biome = DungeonGen.DungeonConfig.DungeonBiome.Value,
                 SpawnDistance = new LocationManager.Range(500, 1500),
                 SpawnAltitude = new LocationManager.Range(10, 100),
                 MinimumDistanceFromGroup = 100,
-                Count = 15,
-                Unique = true
+                Count = Math.Max(1, DungeonGen.DungeonConfig.DungeonCount.Value),
+                Unique = false
             };
+            DungeonGen.DungeonManager.RegisterLocationPrefab(odinsHollowDungeon.Prefab);
 
+            DungeonGen.DungeonManager.LoadDungeonGenAssets(PiecePrefabManager.RegisterAssetBundle("odinshollow"));
 
             #endregion
         }
